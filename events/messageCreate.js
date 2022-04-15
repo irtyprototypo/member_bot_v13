@@ -12,11 +12,31 @@ module.exports = {
 		if(message.author.bot || message.content.substr(0, 1) == '!')
 			return;
 
+		// reactions
+		message.channel.sendTyping()
+		.then( _=> {	// member 🍇
+			if(message.content.toLowerCase().includes('member'))
+				message.react(member);
+		})
+		.then( _=> {	// think
+			if(message.content.toLowerCase().includes('think'))
+				message.react('🤔');
+		})
+		.then( _=> {	// george ⚾
+			if(message.content.toLowerCase().includes('imply') || message.content.startsWith('>') )
+				message.react(`${implying}`);
+		})
+		.then( _=> {	// 🍺
+			if(message.content.toLowerCase().includes('hell y'))
+				message.react(`🍻`);
+		})
+
+
 		// roll if in proper channel
 		if(message.channelId == channel_bot_testing ||
 			message.channelId == channel_bot_testing_2 ||
-			message.channelId == channel_bot_spam)
-{
+			message.channelId == channel_bot_spam) {
+
 			message.channel.send(`<@${message.author.id}> 👉 ${message.id}`)
 			.then( response =>{
 				dubsCheck(message, response);
@@ -28,22 +48,6 @@ module.exports = {
 					message.react('🇦');
 					message.react('🇹');
 				}
-			})
-			.then( _=> {	// member
-				if(message.content.toLowerCase().includes('member'))
-					message.react(member);
-			})
-			.then( _=> {	// think
-				if(message.content.toLowerCase().includes('think'))
-					message.react('🤔');
-			})
-			.then( _=> {	// think
-				if(message.content.toLowerCase().includes('imply') || message.content.startsWith('>') )
-					message.react(`${implying}`);
-			})
-			.then( _=> {	// 🍺
-				if(message.content.toLowerCase().includes('hell y'))
-					message.react(`🍻`);
 			})
 			.catch(console.error);
 		}
