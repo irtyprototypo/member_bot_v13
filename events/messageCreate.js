@@ -8,12 +8,13 @@ module.exports = {
 	once: false,
 	execute(message) {
 		
+		// console.log(message);
 		// ignore other bot commands and other bots
 		if(message.author.bot || message.content.substr(0, 1) == '!')
 			return;
 
 		// reactions
-		message.channel.sendTyping()
+		message.channel.fetch(channel_bot_testing)		// used for promise as makeshift semaphore 
 		.then( _=> {	// member 🍇
 			if(message.content.toLowerCase().includes('member'))
 				message.react(member);
