@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, userMention } = require('@discordjs/builders');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,15 +13,15 @@ module.exports = {
 			.setRequired(true)
 			.setDescription('what shall they be called?'))
 		.addBooleanOption(opt =>
-			opt.setName('shh')
-			.setDescription('shh')),
+			opt.setName('announce')
+			.setDescription('announce')),
 	async execute(interaction) {
 		// console.log(interaction);
 		let who = interaction.options.getMentionable('who');
 		let to = interaction.options.getString('to');
-		let shh = interaction.options.getBoolean('shh');
+		let anounce = interaction.options.getBoolean('shh');
 		interaction.options.getMentionable('who').setNickname(to);
-		if(!shh)
+		if(anounce)
 			interaction.reply(`${interaction.user.username} renamed ${who} to ${to}`);
 		
 		console.log(`${interaction.user.username} renamed ${who.user.username} to ${to}`);

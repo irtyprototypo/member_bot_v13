@@ -4,3 +4,4 @@ config/bot.json
 ugh.js
 package-lock.json
 package.json
+data/ledger.csv

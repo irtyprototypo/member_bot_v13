@@ -1,20 +1,26 @@
 
-const {channel_bot_testing, channel_bot_testing_2, channel_bot_spam} = require('../config/channels.json');
-const {bryan, irtypo} = require('../config/users.json');
-const {PogChamp, pog, gachiGasm, member, implying} = require('../config/emoji.json');
-let what = true;
+const { channel_bot_testing, channel_bot_testing_alt, channel_bot_spam, channel_bot_spam_alt } = require('../config/channels.json');
+const { bryan, irtypo } = require('../config/users.json');
+const { PogChamp, pog, gachiGasm, member, implying } = require('../config/emoji.json');
+const WHAT = true;
+const { DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS } = require('../config/gamba.json');
+const { payout } = require('../util.js');
+const { MODE, guildId, guildId_alt } = require('../config/bot.json');
+const CHANNEL_TEST = (MODE == 'DEV') ? channel_bot_testing_alt : channel_bot_testing;
+const CHANNEL_YELL = (MODE == 'DEV') ? channel_bot_spam : channel_bot_spam_alt;
+
+
 module.exports = {
 	name: 'messageCreate',
 	once: false,
 	execute(message) {
-		
 		// console.log(message);
 		// ignore other bot commands and other bots
 		if(message.author.bot || message.content.substr(0, 1) == '!')
 			return;
 
 		// reactions
-		message.channel.fetch(channel_bot_testing)		// used for promise as makeshift semaphore 
+		message.channel.fetch()		// async 
 		.then( _=> {	// member 🍇
 			if(message.content.toLowerCase().includes('member'))
 				message.react(member);
@@ -34,16 +40,14 @@ module.exports = {
 
 
 		// roll if in proper channel
-		if(message.channelId == channel_bot_testing ||
-			message.channelId == channel_bot_testing_2 ||
-			message.channelId == channel_bot_spam) {
+		if(message.channelId == CHANNEL_TEST || message.channelId == CHANNEL_YELL) {
 
 			message.channel.send(`<@${message.author.id}> 👉 ${message.id}`)
 			.then( response =>{
 				dubsCheck(message, response);
 			})
 			.then( _=> {	// what bryan
-				if(what && (message.author.id == bryan)){
+				if(WHAT && (message.author.id == bryan)){
 					message.react('🇼');
 					message.react('🇭');
 					message.react('🇦');
@@ -63,52 +67,59 @@ function dubsCheck(message, response){
 	let ones = message.id.substr(len-1, 1);
 	let tens = message.id.substr(len-2, 1);
 	let thous = message.id.substr(len-3, 1);
-	let tenThours = message.id.substr(len-4, 1);
-	let hundThours = message.id.substr(len-5, 1);
+	let tenThous = message.id.substr(len-4, 1);
+	let hundThous = message.id.substr(len-5, 1);
 	let mills = message.id.substr(len-6, 1);
 	let n420 = message.id.substr(len-3);
 	let n69 = message.id.substr(len-2, 2);
 
 
-	// let myMessage
-	if(ones == tens)
-		response.react(PogChamp);
-
-	if(	ones == tens &&
-		tens == thous)
-		response.react(pog);
+	// dubs
+	if(ones == tens){
+		if(MODE != "DEV")
+			response.react(PogChamp);
+		payout(message.author, parseInt(DUBS_WINNINGS));
+	}
+		
+	// trips
+	if(	ones == tens && tens == thous){
+		if(MODE != "DEV")
+			response.react(pog);
+		payout(message.author, parseInt(TRIPS_WINNINGS));
+	}
 	
-	//quads
-	if(	ones == tens &&
-		tens == thous &&
-		thous == tenThours)
-		response.react(gachiGasm);
-
-	// quints
-	if(	ones == tens &&
-		tens == thous &&
-		thous == tenThours &&
-		tenThours == hundThours){
-		response.react(`🙏`);
-		response.react(`💣`);
+	// quads
+	if(	ones == tens && tens == thous && thous == tenThous){
+		if(MODE != "DEV")
+			response.react(gachiGasm);
+		payout(message.author, parseInt(QUADS_WINNINGS));
 	}
 
-	if(	ones == tens &&
-		tens == thous &&
-		thous == tenThours &&
-		tenThours == hundThours &&
-		hundThours == mills)
-		response.react(`🔫`);
+	// quints
+	if(	ones == tens && tens == thous && thous == tenThous && tenThous == hundThous){
+		response.react(`🙏`);
+		response.react(`💣`);
+		payout(message.author, parseInt(QUINTS_WINNINGS));
+	}
 
-	if(n420 == `420`)
+	// no sex. go touch grass.
+	if(	ones == tens && tens == thous && thous == tenThous && tenThous == hundThous && hundThous == mills){
+		response.react(`🔫`);
+		payout(message.author, -666666);
+	}
+
+	if(n420 == `420`){
 		response.react('🌲');
+		payout(message.author, 420);
+	}
 
 	if(n69 == `69`){
 		response.react('🇳');
 		response.react('🇮');
 		response.react('🇨');
 		response.react('🇪');
+		payout(message.author, 690);
 	}
 
-	// console.log(`${message.author.username} rolled a ...${mills}${hundThours}${tenThours}${thous}${tens}${ones}`);
+	// console.log(`${message.author.username} rolled a ...${mills}${hundThous}${tenThous}${thous}${tens}${ones}`);
 }
