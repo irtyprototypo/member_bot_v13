@@ -49,7 +49,6 @@ function newLedgerEntry(csv, user){
 
 function payout(user, amount) {
     let csv = loadAndValidateCSV(ledger_path);
-    let currentPoints = 0;
     let userIndex = 0;
     let prev = 0;
 
@@ -57,25 +56,15 @@ function payout(user, amount) {
 
         if(gambler.id == user.id){
             userIndex = index;
-            // if (Math.abs(amount) <= parseInt(gambler.points)){
                 prev = gambler.points;
-                console.log(Math.abs(amount), prev)
                 gambler.points = ((parseInt(gambler.points) + amount) < 0) ? 0 : parseInt(gambler.points) + amount;
                 newGambler = false;
-                console.log(gambler.points)
-
-            // }
         }
     });
 
     if(newGambler)
         csv = newLedgerEntry(csv, user);
     
-
-    // if (Math.abs(amount) > prev)
-        // return {'csv': csv, 'str': `Transaction failed. Insufficient funds.`};
-
-
     str = `${((amount > 0)  ? 'won' : 'lost' )} ${Math.abs(amount)} points and are now at ${csv[userIndex].points} points.`;
     console.log(`${user.username} has ${str}`);
 
