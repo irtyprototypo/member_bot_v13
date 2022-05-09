@@ -17,6 +17,7 @@ module.exports = {
 		bet = (bet) ? bet : 20;
 		let roll = Math.floor(Math.random() * 100);
 
+
 		if(roll == 100){
 			paid = payout(interaction.user, bet*critMultiplier);
 			str = `won ${bet*critMultiplier} points.`
@@ -33,13 +34,13 @@ module.exports = {
 			str = `lost ${bet} points.`
 		}
 
-		if(paid.str.includes('Transaction failed')){
-			respStr = `${paid.str}`;
-			win = false;
-		} else{
-			respStr = `You bet ${bet} and rolled a ${roll}.\n You ${paid.str}`;
-			console.log(`${interaction.user.username} rolled a ${roll} and ${str}`);
+		if(paid.user.points < bet){
+			interaction.reply(`Transaction failed. Insufficient funds.`);
+			return;
 		}
+
+		respStr = `You bet ${bet} and rolled a ${roll}.\n You ${paid.str}`;
+		console.log(`${interaction.user.username} rolled a ${roll} and ${str}`);
 
 
 		let message = await interaction.reply({ content: respStr, fetchReply: true });

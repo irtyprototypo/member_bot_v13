@@ -10,6 +10,7 @@ function checkPoints(user) {
     let csv = loadAndValidateCSV(ledger_path);
     let userIndex = 0;
     newGambler = true;
+    // console.log(csv);
     csv.forEach( (gambler, index) =>{
         if(gambler.id == user.id){
             userIndex = index;
@@ -23,27 +24,23 @@ function checkPoints(user) {
     writeCSV(csv);
     str = `#${csv[userIndex].place} with ${csv[userIndex].points} points.`;
     console.log(`${user.username} is ${str}`);
-    return { 'csv': csv, 'str': str };
+    return { 'csv': csv, 'str': str , 'user': csv[userIndex]};
 }
 
 
 function loadAndValidateCSV(csv_path){
-    let csv = [];
-    try{
-        csv = load(csv_path);
-        csv = makeUnique(csv);
-    } catch(e){
+    let fileHeader = fs.readFileSync(csv_path, 'UTF-8').split(/\r?\n/)[0];
+    if(fileHeader != CSV_HEADERS.toString()){
+        console.log('Writing Headers...');
         fs.writeFileSync(csv_path, CSV_HEADERS.toString())
-        csv = load(csv_path);
-        csv = makeUnique(csv);
     }
-
-
+    csv = load(csv_path);
+    csv = makeUniqueAndSort(csv);
     return csv;
 }
 
 function newLedgerEntry(csv, user){
-    csv.push({ id: user.id,  username: user.username, place: 'free', points: BASE_POINTS, gambles: 0, dubs: 0, trips: 0, quads: 0, quints: 0 })
+    csv.push({ id: user.id,  username: user.username, place: csv.length+1, points: BASE_POINTS, gambles: 0, dubs: 0, trips: 0, quads: 0, quints: 0 })
     newGambler = false;
     console.log(`${user.username} was added to the ledger with ${BASE_POINTS} points.`);
 
@@ -54,28 +51,36 @@ function payout(user, amount) {
     let csv = loadAndValidateCSV(ledger_path);
     let currentPoints = 0;
     let userIndex = 0;
+    let prev = 0;
 
     csv.forEach( (gambler, index) =>{
+
         if(gambler.id == user.id){
             userIndex = index;
-            currentPoints = ((parseInt(gambler.points) + amount) < 0) ? 0 : parseInt(gambler.points) + amount;
-            gambler.points = currentPoints;
-            newGambler = false;
+            // if (Math.abs(amount) <= parseInt(gambler.points)){
+                prev = gambler.points;
+                console.log(Math.abs(amount), prev)
+                gambler.points = ((parseInt(gambler.points) + amount) < 0) ? 0 : parseInt(gambler.points) + amount;
+                newGambler = false;
+                console.log(gambler.points)
+
+            // }
         }
     });
 
     if(newGambler)
         csv = newLedgerEntry(csv, user);
+    
 
-    if (Math.abs(amount) > currentPoints)
-        return {'csv': csv, 'str': `Transaction failed. Insufficient funds.`};
+    // if (Math.abs(amount) > prev)
+        // return {'csv': csv, 'str': `Transaction failed. Insufficient funds.`};
 
 
-    str = `${((amount > 0)  ? 'won' : 'lost' )} ${Math.abs(amount)} points and are now at ${currentPoints} points.`;
+    str = `${((amount > 0)  ? 'won' : 'lost' )} ${Math.abs(amount)} points and are now at ${csv[userIndex].points} points.`;
     console.log(`${user.username} has ${str}`);
 
     writeCSV(csv);
-    return {'csv': csv, 'str': str };
+    return {'csv': csv, 'str': str, 'user': csv[userIndex]};
 }
 
 function gift(gifter, recipient, amount){
@@ -120,29 +125,15 @@ function gift(gifter, recipient, amount){
     return {'csv': csv, 'str': str};
 }
 
-function makeUnique(csv){
-    const uniqueIds = [];
-    const unique = csv.filter(element => {
-      const isDuplicate = uniqueIds.includes(element.id);
-    
-      if (!isDuplicate) {
-        uniqueIds.push(element.id);
-    
-        return true;
-      }
-    
-      return false;
-    });
-    
-    // console.log(unique);
-
-    unique.sort((a,b) => b.points - a.points);
-    return unique;
+function makeUniqueAndSort(csv){
+    csv = csv.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i)
+    csv.sort((a,b) => b.points - a.points);
+    return csv;
 }
 
 
 function writeCSV(csv){
-    csv = makeUnique(csv);
+    csv = makeUniqueAndSort(csv);
 
     var fil = fs.readFileSync(ledger_path).toString().split("\n");
     if(fil[0] != CSV_HEADERS.toString())
@@ -154,7 +145,7 @@ function writeCSV(csv){
         [ item.id,  item.username, ++index,  item.points, item.gambles, item.dubs, item.trips, item.quads, item.quints])
     ].map(e => e.join(",")).join("\n");
         
-    fs.writeFile(ledger_path, csvString, (err) => { if (err) console.log(err); });
+    fs.writeFileSync(ledger_path, csvString, (err) => { if (err) console.log(err); });
 }
 
 module.exports = {

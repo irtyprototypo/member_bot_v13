@@ -16,6 +16,9 @@ commands.push(require(`./commands/points`).data.toJSON());
 commands.push(require(`./commands/win`).data.toJSON());
 commands.push(require(`./commands/gamble`).data.toJSON());
 commands.push(require(`./commands/gift`).data.toJSON());
+commands.push(require(`./commands/deathroll`).data.toJSON());
+commands.push(require(`./commands/rps`).data.toJSON());
+commands.push(require(`./commands/scoreboard`).data.toJSON());
 
 
 

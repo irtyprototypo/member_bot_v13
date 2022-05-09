@@ -1,4 +1,4 @@
-const { checkPoints, scoreboard } = require('../util.js');
+const { checkPoints } = require('../util.js');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
