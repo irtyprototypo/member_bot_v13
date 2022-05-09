@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { WIN_THREASHOLD } = require('../config/gamba.json');
-const { payout } = require('../util.js');
+const { checkPoints, payout } = require('../util.js');
 let critMultiplier = 3;
 
 
@@ -16,6 +16,11 @@ module.exports = {
 		let bet = interaction.options.getNumber('bet');
 		bet = (bet) ? bet : 20;
 		let roll = Math.floor(Math.random() * 100);
+		
+		if(bet > checkPoints(interaction.user).user.points){
+			interaction.reply(`Transaction failed. Insufficient funds.`);
+			return;
+		}
 
 
 		if(roll == 100){
@@ -34,10 +39,6 @@ module.exports = {
 			str = `lost ${bet} points.`
 		}
 
-		if(paid.user.points < bet){
-			interaction.reply(`Transaction failed. Insufficient funds.`);
-			return;
-		}
 
 		respStr = `You bet ${bet} and rolled a ${roll}.\n You ${paid.str}`;
 		console.log(`${interaction.user.username} rolled a ${roll} and ${str}`);

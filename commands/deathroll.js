@@ -71,8 +71,10 @@ module.exports = {
 					}
 					break;
 				case '🚫':
-					if(user.id === roller2.id)
+					if(user.id === roller2.id){
 						message.reply(`${roller2.username} has denied the death roll.`);
+						message.reactions.removeAll()
+					}
 					break;
 				case '🎲':
 
@@ -85,7 +87,7 @@ module.exports = {
 							embededResponse.description = `${embDesc}\n Winner: ${turn.username}`;
 							embededResponse.fields.push({
 								name: `Roll ${rollCount}`,
-								value: `${user.username} rolls a ${roll}. ${user.username} loses.`,
+								value: `${user.username} rolls a ${roll}. ${user.username} loses ${amount} points.`,
 								inline: false
 							})
 							message.edit({embeds: [ embededResponse ]});
