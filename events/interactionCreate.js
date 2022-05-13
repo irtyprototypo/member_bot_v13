@@ -14,7 +14,6 @@ module.exports = {
 		if (!command) return;
 		try {
 			digits = dubsCheck(interaction.id);
-			digits = 420;
 			if(digits > 0)
 				payout(interaction.user, digits);
 			command.execute(interaction);
