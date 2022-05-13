@@ -4,7 +4,7 @@ const { bryan, irtypo } = require('../config/users.json');
 const { PogChamp, pog, gachiGasm, member, implying } = require('../config/emoji.json');
 const WHAT = true;
 const { DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS } = require('../config/gamba.json');
-const { payout } = require('../util.js');
+const { payout, dubsCheck } = require('../util.js');
 const { MODE, guildId, guildId_alt } = require('../config/bot.json');
 const CHANNEL_TEST = (MODE == 'DEV') ? channel_bot_testing_alt : channel_bot_testing;
 const CHANNEL_YELL = (MODE == 'DEV') ? channel_bot_spam : channel_bot_spam_alt;
@@ -38,13 +38,19 @@ module.exports = {
 				message.react(`🍻`);
 		})
 
+		// points singles
+		single = parseInt(message.id.substr(message.id.length-1, 1))
+		payout(message.author, single);
 
 		// roll if in proper channel
 		if(message.channelId == CHANNEL_TEST || message.channelId == CHANNEL_YELL) {
 
 			message.channel.send(`<@${message.author.id}> 👉 ${message.id}`)
 			.then( response =>{
-				dubsCheck(message, response);
+				digits = dubsCheck(message.id);
+				reactIfDubs(digits, response);
+				if (digits > 0)
+					payout(message.author, digits)
 			})
 			.then( _=> {	// what bryan
 				if(WHAT && (message.author.id == bryan)){
@@ -57,69 +63,46 @@ module.exports = {
 			.catch(console.error);
 		}
 
+
+		
+
 	},
 };
 
 
-function dubsCheck(message, response){
+function reactIfDubs(digits, response){
 
-	let len = message.id.length;
-	let ones = message.id.substr(len-1, 1);
-	let tens = message.id.substr(len-2, 1);
-	let thous = message.id.substr(len-3, 1);
-	let tenThous = message.id.substr(len-4, 1);
-	let hundThous = message.id.substr(len-5, 1);
-	let mills = message.id.substr(len-6, 1);
-	let n420 = message.id.substr(len-3);
-	let n69 = message.id.substr(len-2, 2);
-
-
-	// dubs
-	if(ones == tens){
-		if(MODE != "DEV")
-			response.react(PogChamp);
-		payout(message.author, parseInt(DUBS_WINNINGS));
+	if(MODE != "DEV"){
+		switch(digits){
+			case DUBS_WINNINGS:
+				response.react(PogChamp);
+				break;
+			case TRIPS_WINNINGS:
+				response.react(pog);
+				break;
+			case QUADS_WINNINGS:
+				response.react(gachiGasm);
+				break;
+			case QUINTS_WINNINGS:
+				response.react(`🙏`);
+				response.react(`💣`);
+				break;
+			case -666666:
+				response.react(`🔫`);
+				break;
+			case 420:
+				response.react('🌲');
+				response.react(PogChamp);
+				break;
+			case 69:
+				response.react(PogChamp);
+				response.react('🇳');
+				response.react('🇮');
+				response.react('🇨');
+				response.react('🇪');
+				break;
+			default:
+				break;
+		}
 	}
-		
-	// trips
-	if(	ones == tens && tens == thous){
-		if(MODE != "DEV")
-			response.react(pog);
-		payout(message.author, parseInt(TRIPS_WINNINGS));
-	}
-	
-	// quads
-	if(	ones == tens && tens == thous && thous == tenThous){
-		if(MODE != "DEV")
-			response.react(gachiGasm);
-		payout(message.author, parseInt(QUADS_WINNINGS));
-	}
-
-	// quints
-	if(	ones == tens && tens == thous && thous == tenThous && tenThous == hundThous){
-		response.react(`🙏`);
-		response.react(`💣`);
-		payout(message.author, parseInt(QUINTS_WINNINGS));
-	}
-
-	// no sex. go touch grass.
-	if(	ones == tens && tens == thous && thous == tenThous && tenThous == hundThous && hundThous == mills){
-		response.react(`🔫`);
-		payout(message.author, -666666);
-	}
-
-	if(n420 == `420`){
-		response.react('🌲');
-		payout(message.author, 420);
-	}
-
-	if(n69 == `69`){
-		response.react('🇳');
-		response.react('🇮');
-		response.react('🇨');
-		response.react('🇪');
-		payout(message.author, 690);
-	}
-
-	// console.log(`${message.author.username} rolled a ...${mills}${hundThous}${tenThous}${thous}${tens}${ones}`);
 }

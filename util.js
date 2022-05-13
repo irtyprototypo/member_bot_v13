@@ -1,10 +1,9 @@
-
+const { BASE_POINTS, DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS } = require('./config/gamba.json');
 const ledger_path = './data/ledger.csv';
 const fs = require('fs');
-const { BASE_POINTS } = require('./config/gamba.json');
 let newGambler = true;
 const { load } = require('csv-load-sync');
-const CSV_HEADERS = ['id', 'username', 'place', 'points', 'gambles', 'dubs', 'trips', 'quads', 'quints', ];
+const CSV_HEADERS = ['id', 'username', 'place', 'points'];
 
 function checkPoints(user) {
     let csv = loadAndValidateCSV(ledger_path);
@@ -40,7 +39,7 @@ function loadAndValidateCSV(csv_path){
 }
 
 function newLedgerEntry(csv, user){
-    csv.push({ id: user.id,  username: user.username, place: csv.length+1, points: BASE_POINTS, gambles: 0, dubs: 0, trips: 0, quads: 0, quints: 0 })
+    csv.push({ id: user.id,  username: user.username, place: csv.length+1, points: BASE_POINTS})
     newGambler = false;
     console.log(`${user.username} was added to the ledger with ${BASE_POINTS} points.`);
 
@@ -131,14 +130,48 @@ function writeCSV(csv){
 
     let csvString = [
         CSV_HEADERS, ...csv.map((item, index) =>
-        [ item.id,  item.username, ++index,  item.points, item.gambles, item.dubs, item.trips, item.quads, item.quints])
+        [ item.id,  item.username, ++index,  item.points])
     ].map(e => e.join(",")).join("\n");
         
     fs.writeFileSync(ledger_path, csvString, (err) => { if (err) console.log(err); });
 }
 
+
+function dubsCheck(messageId){
+
+	let len = messageId.length;
+	let ones = messageId.substr(len-1, 1);
+	let tens = messageId.substr(len-2, 1);
+	let thous = messageId.substr(len-3, 1);
+	let tenThous = messageId.substr(len-4, 1);
+	let hundThous = messageId.substr(len-5, 1);
+	let mills = messageId.substr(len-6, 1);
+	let n420 = messageId.substr(len-3);
+	let n69 = messageId.substr(len-2, 2);
+
+	if(ones == tens)
+		return parseInt(DUBS_WINNINGS)
+	else if(ones == tens && tens == thous)
+		return parseInt(TRIPS_WINNINGS)
+	else if(ones == tens && tens == thous && thous == tenThous)
+		return parseInt(QUADS_WINNINGS)
+	else if(ones == tens && tens == thous && thous == tenThous && tenThous == hundThous)
+		return parseInt(QUINTS_WINNINGS)
+	else if(ones == tens && tens == thous && thous == tenThous && tenThous == hundThous && hundThous == mills)
+		return -666666
+    else if(n420 == `420`)
+		return 420
+    else if(n69 == `69`)
+		return 69
+    else 
+		return 0
+
+	// console.log(`${message.author.username} rolled a ...${mills}${hundThous}${tenThous}${thous}${tens}${ones}`);
+}
+
 module.exports = {
     gift,
     payout,
-    checkPoints
+    checkPoints,
+    dubsCheck
 }

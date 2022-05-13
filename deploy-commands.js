@@ -1,4 +1,4 @@
-const fs = require('node:fs');
+const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { botId, guildId, token, guildId_alt} = require('./config/bot.json');
@@ -19,6 +19,7 @@ commands.push(require(`./commands/gift`).data.toJSON());
 commands.push(require(`./commands/deathroll`).data.toJSON());
 commands.push(require(`./commands/rps`).data.toJSON());
 commands.push(require(`./commands/scoreboard`).data.toJSON());
+commands.push(require(`./commands/burn`).data.toJSON());
 
 
 

@@ -1,7 +1,7 @@
 // const {sandW} = require('../config/emoji.json');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageAttachment } = require('discord.js');
-const fs = require('node:fs');
+const fs = require('fs');
 
 
 const stoneColdGIFs = fs.readdirSync('./img/stonecold');

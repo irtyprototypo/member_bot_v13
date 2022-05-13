@@ -1,7 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const messageCreate = require('../events/messageCreate.js');
 const { checkPoints } = require('../util.js');
-
+const { MODE } = require('../config/bot.json');
+// const CHANNEL_TEST = (MODE == 'DEV') ? channel_bot_testing_alt : channel_bot_testing;
+// const CHANNEL_YELL = (MODE == 'DEV') ? channel_bot_spam : channel_bot_spam_alt;
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -22,7 +24,8 @@ module.exports = {
 					str = `🥇 ${g.place}st: ${g.username} 🏆`;
 					interaction.guild.members.fetch(g.id).then( e =>{
 							if(!e.nickname.endsWith('🏆'))
-								e.setNickname(`${e.nickname} 🏆`);
+								if(MODE != 'DEV')
+									e.setNickname(`${e.nickname} 🏆`);
 					});
 					break;
 				case 2:

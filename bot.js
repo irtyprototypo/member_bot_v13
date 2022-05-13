@@ -1,4 +1,4 @@
-const fs = require('node:fs');
+const fs = require('fs');
 const { Client, Intents, Collection } = require('discord.js');
 const {token} = require('./config/bot.json');
 
