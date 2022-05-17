@@ -44,8 +44,8 @@ module.exports = {
 			consecutiveCount = 0;
 		}
 
-
-		respStr = `You bet ${bet} and rolled a ${roll}.\n You ${paid.str}`;
+		emoj = (roll > WIN_THREASHOLD) ? '📈' : '📉';
+		respStr = `You bet ${bet} and rolled a ${roll} ${emoj}.\n You ${paid.str}`;
 		console.log(`${interaction.user.username} rolled a ${roll} and ${str}`);
 
 

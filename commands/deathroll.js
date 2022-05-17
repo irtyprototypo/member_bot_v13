@@ -66,7 +66,7 @@ module.exports = {
 				case '✅':
 					if(user.id === roller2.id){
 						message.reactions.removeAll()
-						message.reply(`☠ ${roller2.username} has accepted 🎲.\n ${roller1.username} rolled a ${r1roll} and ${roller2.username} rolled a ${r2roll}.\n ${starter.username} will be rolling first.`);
+						message.reply(`☠ ${roller2.username} has accepted 🎲\n ${roller1.username} rolled a ${r1roll} and ${roller2.username} rolled a ${r2roll}. ${starter.username} will be rolling first.`);
 						message.react(`🎲`);
 					}
 					break;
