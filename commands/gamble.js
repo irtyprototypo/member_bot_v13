@@ -1,11 +1,11 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { WIN_THREASHOLD } = require('../config/gamba.json');
 const { checkPoints, payout } = require('../util.js');
+const FIRE_THREASHOLD =3;
 let critMultiplier = 10;
 let consecutiveCount = 0;
 const { takemymoney } = require('../config/emoji.json');
 const { MODE } = require('../config/bot.json');
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('gamble')
@@ -43,6 +43,9 @@ module.exports = {
 			str = `lost ${bet} points.`;
 			consecutiveCount = 0;
 		}
+
+		if(consecutiveCount >= FIRE_THREASHOLD)
+			payout(interaction.user, bet*FIRE_THREASHOLD);
 
 		emoj = (roll > WIN_THREASHOLD) ? '📈' : '📉';
 		respStr = `You bet ${bet} and rolled a ${roll} ${emoj}.\n You ${paid.str}`;
