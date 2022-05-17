@@ -13,7 +13,7 @@ const CHANNEL_YELL = (MODE == 'DEV') ? channel_bot_spam : channel_bot_spam_alt;
 module.exports = {
 	name: 'messageCreate',
 	once: false,
-	execute(message) {
+	async execute(message) {
 		// console.log(message);
 		// ignore other bot commands and other bots
 		if(message.author.bot || message.content.substr(0, 1) == '!')
@@ -45,12 +45,12 @@ module.exports = {
 		// roll if in proper channel
 		if(message.channelId == CHANNEL_TEST || message.channelId == CHANNEL_YELL) {
 
-			message.channel.send(`<@${message.author.id}> 👉 ${message.id}`)
+			await message.channel.send(`<@${message.author.id}> 👉 ${message.id}`)
 			.then( response =>{
-				digits = dubsCheck(message.id);
-				reactIfDubs(digits, response);
-				if (digits > 0)
-					payout(message.author, digits)
+				dubsWinnings = dubsCheck(message.id);
+				reactIfDubs(dubsWinnings, response);
+				if (dubsWinnings > 0)
+					payout(message.author, dubsWinnings)
 			})
 			.then( _=> {	// what bryan
 				if(WHAT && (message.author.id == bryan)){
@@ -74,16 +74,16 @@ function reactIfDubs(digits, response){
 
 	if(MODE != "DEV"){
 		switch(digits){
-			case DUBS_WINNINGS:
+			case parseInt(DUBS_WINNINGS):
 				response.react(PogChamp);
 				break;
-			case TRIPS_WINNINGS:
+			case parseInt(TRIPS_WINNINGS):
 				response.react(pog);
 				break;
-			case QUADS_WINNINGS:
+			case parseInt(QUADS_WINNINGS):
 				response.react(gachiGasm);
 				break;
-			case QUINTS_WINNINGS:
+			case parseInt(QUINTS_WINNINGS):
 				response.react(`🙏`);
 				response.react(`💣`);
 				break;
