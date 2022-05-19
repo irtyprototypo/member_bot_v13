@@ -47,7 +47,7 @@ module.exports = {
 		if(consecutiveCount >= FIRE_THREASHOLD)
 			payout(interaction.user, bet*FIRE_THREASHOLD);
 
-		emoj = (roll > WIN_THREASHOLD) ? '📈' : '📉';
+		emoj = (roll >= WIN_THREASHOLD) ? '📈' : '📉';
 		respStr = `You bet ${bet} and rolled a ${roll} ${emoj}.\n You ${paid.str}`;
 		console.log(`${interaction.user.username} rolled a ${roll} and ${str}`);
 

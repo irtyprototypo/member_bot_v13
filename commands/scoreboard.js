@@ -8,22 +8,21 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('scoreboard')
 		.setDescription(`👀`),
-	async execute(interaction) {
+	execute(interaction) {
 		let f = []
 		csv = checkPoints(interaction.user).csv;
-
 		csv.forEach((g, i) => {
-			interaction.guild.members.cache.forEach( m =>{
-				if(m.displayName.endsWith('🏆'))
-					m.displayName.substr(0, m.displayName.length-2);
-			});
 
+			
 			switch(parseInt(g.place)){
 				case 1:
 					str = `🥇 ${g.place}st: ${g.username} 🏆`;
 					interaction.guild.members.fetch(g.id).then( e =>{
-							if(e.nickname && !e.nickname.endsWith('🏆'))
-								if(MODE != 'DEV')
+						// if(MODE != 'DEV')
+							if(!e.nickname || !e.nickname.endsWith('🏆'))
+								if(!e.nickname)
+									e.setNickname(`${e.user.username} 🏆`)
+								else
 									e.setNickname(`${e.nickname} 🏆`);
 					});
 					break;
@@ -43,6 +42,14 @@ module.exports = {
 				name: `${str}`,
 				value: g.points
 			};
+			
+			interaction.guild.members.cache.forEach( m =>{
+				if(g.place < 2)
+					return;
+				if(g.username == m.user.username && m.displayName.includes('🏆'))
+					m.setNickname(m.displayName.substr(0, m.displayName.length-2));
+			});
+
 		});
 		interaction.reply({ embeds: [{fields: f}] });
 
