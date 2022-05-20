@@ -74,7 +74,7 @@ module.exports = {
 		try{
 			post = interaction.reply({ embeds: [embededResponse], fetchReply: true })
 		}catch(e){
-			post = interaction.channels.cache.get(CHANNEL_YELL).send(`@everyone`); 
+			post = interaction.channels.cache.get(CHANNEL_YELL).send(`@here`); 
 			post = interaction.channels.cache.get(CHANNEL_YELL).send({ embeds: [embededResponse], fetchReply: true }); 
 		}
 	
@@ -183,7 +183,9 @@ module.exports = {
 										answers.push(answer);
 										answers = shuffle(answers);
 										answerId = answers.indexOf(answer);
-										answer_choices = (r.results[0].type.includes('boolean')) ? BOOL_CHOICES : MULTI_CHOICES;
+										// answer_choices = (r.results[0].type.includes('boolean')) ? BOOL_CHOICES : MULTI_CHOICES;
+										// shuffle bug
+										answer_choices = MULTI_CHOICES;
 										answers.forEach( (c, i) =>{ p.react(answer_choices[i]) })
 										
 										p.react(GO_EMOJI)
@@ -239,8 +241,10 @@ module.exports = {
 								p.edit({embeds: [embededResponse]});
 		
 								setTimeout(() => {		// lol shut up
-									if (winners.length > 0)
+									if (winners.length > 0){
 										embededResponse.fields.push({ name: `Winner (${prize} points)`, value: `${winners.toString()}`, inline: false })
+										embededResponse.color = '#57F287';
+									}
 									p.edit({embeds: [embededResponse]});
 									
 									winners.forEach(w =>{ payout(w, parseInt(prize)) })

@@ -114,5 +114,11 @@ module.exports = {
 			}
 
 		});
+
+		collector.on('end', collected => {
+			message.reactions.removeAll()
+		});
+
+
 	},
 };

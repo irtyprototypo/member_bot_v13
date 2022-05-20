@@ -4,7 +4,7 @@ const { bryan, irtypo } = require('../config/users.json');
 const { PogChamp, pog, gachiGasm, member, implying } = require('../config/emoji.json');
 const WHAT = true;
 const { DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS, STUN_CHANCE } = require('../config/gamba.json');
-const { payout, dubsCheck } = require('../util.js');
+const { payout, dubsCheck, reactIfDubs } = require('../util.js');
 const { MODE, guildId, guildId_alt } = require('../config/bot.json');
 const CHANNEL_TEST = (MODE == 'DEV') ? channel_bot_testing_alt : channel_bot_testing;
 const CHANNEL_YELL = (MODE == 'DEV') ? channel_bot_spam : channel_bot_spam_alt;
@@ -24,8 +24,8 @@ module.exports = {
 
 
 		// stunner
-		let stunned = Math.random() * parseInt(STUN_CHANCE)
-		if(message.member.voice.channel && stunned > parseInt(STUN_CHANCE)-1){
+		let stunned = Math.random() * STUN_CHANCE
+		if(message.member.voice.channel && stunned > STUN_CHANCE-1){
 			message.member.voice.disconnect();
 			message.reply({ 
 				// content: `1/${STUN_CHANCE} chance to get stunned. 🍻 https://youtu.be/MOzjBO2dsmY 🍻`,
@@ -49,7 +49,7 @@ module.exports = {
 				message.react(`${implying}`);
 		})
 		.then( _=> {	// 🍺
-			if(message.content.toLowerCase().includes('hell y'))
+			if(message.content.toLowerCase().match(/\bh*e*l*\b \by.[aeh]*\b/))
 				message.react(`🍻`);
 		})
 
@@ -63,6 +63,7 @@ module.exports = {
 			await message.channel.send(`<@${message.author.id}> 👉 ${message.id}`)
 			.then( response =>{
 				dubsWinnings = dubsCheck(message.id);
+				console.log(dubsWinnings);
 				reactIfDubs(dubsWinnings, response);
 				if (dubsWinnings > 0)
 					payout(message.author, dubsWinnings)
@@ -84,40 +85,3 @@ module.exports = {
 	},
 };
 
-
-function reactIfDubs(digits, response){
-
-	if(MODE != "DEV"){
-		switch(digits){
-			case parseInt(DUBS_WINNINGS):
-				response.react(PogChamp);
-				break;
-			case parseInt(TRIPS_WINNINGS):
-				response.react(pog);
-				break;
-			case parseInt(QUADS_WINNINGS):
-				response.react(gachiGasm);
-				break;
-			case parseInt(QUINTS_WINNINGS):
-				response.react(`🙏`);
-				response.react(`💣`);
-				break;
-			case -666666:
-				response.react(`🔫`);
-				break;
-			case 420:
-				response.react('🌲');
-				response.react(PogChamp);
-				break;
-			case 69:
-				response.react(PogChamp);
-				response.react('🇳');
-				response.react('🇮');
-				response.react('🇨');
-				response.react('🇪');
-				break;
-			default:
-				break;
-		}
-	}
-}

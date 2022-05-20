@@ -1,9 +1,12 @@
 const { BASE_POINTS, DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS } = require('./config/gamba.json');
 const ledger_path = './data/ledger.csv';
 const fs = require('fs');
+const { PogChamp, pog, gachiGasm, member, implying } = require('./config/emoji.json');
 let newGambler = true;
 const { load } = require('csv-load-sync');
 const CSV_HEADERS = ['id', 'username', 'place', 'points'];
+const { MODE, guildId, guildId_alt } = require('./config/bot.json');
+
 
 function checkPoints(user) {
     let csv = loadAndValidateCSV(ledger_path);
@@ -149,29 +152,69 @@ function dubsCheck(messageId){
 	let n420 = messageId.substr(len-3);
 	let n69 = messageId.substr(len-2, 2);
 
-	if(ones == tens)
-		return parseInt(DUBS_WINNINGS)
-	else if(ones == tens && tens == thous)
-		return parseInt(TRIPS_WINNINGS)
-	else if(ones == tens && tens == thous && thous == tenThous)
-		return parseInt(QUADS_WINNINGS)
-	else if(ones == tens && tens == thous && thous == tenThous && tenThous == hundThous)
-		return parseInt(QUINTS_WINNINGS)
-	else if(ones == tens && tens == thous && thous == tenThous && tenThous == hundThous && hundThous == mills)
-		return -666666
+    if(ones == tens && tens == thous && thous == tenThous && tenThous == hundThous && hundThous == mills)
+        return -666666
+    else if(ones == tens && tens == thous && thous == tenThous && tenThous == hundThous)
+        return QUINTS_WINNINGS
+    else if(ones == tens && tens == thous && thous == tenThous)
+        return QUADS_WINNINGS
     else if(n420 == `420`)
-		return 420
+        return 420
     else if(n69 == `69`)
-		return 69
+        return 69
+    else if(ones == tens && tens == thous)
+        return TRIPS_WINNINGS
+    else if(ones == tens)
+        return DUBS_WINNINGS
     else 
 		return 0
 
 	// console.log(`${message.author.username} rolled a ...${mills}${hundThous}${tenThous}${thous}${tens}${ones}`);
 }
 
+function reactIfDubs(winnings, response){
+    let dubsEmoji = PogChamp;
+    let tripsEmoji = pog;
+    let quadsEmoji = gachiGasm;
+
+    if(MODE == 'DEV'){
+        dubsEmoji = '🙂';
+        tripsEmoji = '😃';
+        quadsEmoji = '😎';
+    }
+
+
+    if(winnings >= DUBS_WINNINGS)
+        response.react(dubsEmoji);
+
+    if(winnings >= TRIPS_WINNINGS)
+        response.react(tripsEmoji);
+
+    if(winnings >= QUADS_WINNINGS)
+        response.react(quadsEmoji);
+
+    if(winnings >= QUINTS_WINNINGS){
+        response.react(`🙏`);
+        response.react(`💣`);
+    }
+    if(winnings == -666666)
+        response.react('🔫');
+
+    if(winnings == 420)
+        response.react('🌲');
+
+    if(winnings == 69){
+        response.react('🇳');
+        response.react('🇮');
+        response.react('🇨');
+        response.react('🇪');
+    }
+}
+
 module.exports = {
     gift,
     payout,
     checkPoints,
-    dubsCheck
+    dubsCheck,
+    reactIfDubs
 }

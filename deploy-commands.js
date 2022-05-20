@@ -12,14 +12,8 @@ const commands = [];
 // 	commands.push(command.data.toJSON());
 // }
 
-commands.push(require(`./commands/points`).data.toJSON());
-commands.push(require(`./commands/win`).data.toJSON());
-commands.push(require(`./commands/gamble`).data.toJSON());
-commands.push(require(`./commands/gift`).data.toJSON());
-commands.push(require(`./commands/deathroll`).data.toJSON());
-commands.push(require(`./commands/rps`).data.toJSON());
-commands.push(require(`./commands/scoreboard`).data.toJSON());
-commands.push(require(`./commands/burn`).data.toJSON());
+// commands.push(require(`./commands/trivs`).data.toJSON());
+commands.push(require(`./commands/meme`).data.toJSON());
 
 
 

@@ -16,8 +16,8 @@ module.exports = {
 		if (!command) return;
 
 		// stunner
-		let stunned = Math.random() * parseInt(STUN_CHANCE)
-		if(interaction.member.voice.channel && stunned > parseInt(STUN_CHANCE)-1){
+		let stunned = Math.random() * STUN_CHANCE
+		if(interaction.member.voice.channel && stunned > STUN_CHANCE-1){
 			interaction.member.voice.disconnect();
 				interaction.reply({ 
 					// content: `1/${STUN_CHANCE} chance to get stunned. 🍻 https://youtu.be/MOzjBO2dsmY 🍻`,

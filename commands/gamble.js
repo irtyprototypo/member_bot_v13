@@ -9,7 +9,7 @@ const { MODE } = require('../config/bot.json');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('gamble')
-		.setDescription(`💰💸💸: 🎲 > ${WIN_THREASHOLD}`)
+		.setDescription(`🎲 > ${WIN_THREASHOLD} = 💰`)
 		.addNumberOption(opt =>
 			opt.setName('bet')
 			.setDescription('my pleasure')),
