@@ -261,7 +261,7 @@ module.exports = {
 		
 				collection.on('end', collected => {
 					p.reactions.removeAll()
-					console.log(`ended`)
+					console.log(`Trivia question expired.`)
 				});
 		
 			})

@@ -13,6 +13,7 @@ module.exports = {
 		let str = (MODE == 'DEV') ? '🌲🌲' : '🍺🍺';
 		let guruInterval = 1;
 		let triviaInterval = 8;
+		let memeInterval = 1;
 
 		console.log(`Ready! Logged in as ${client.user.tag}`);
         client.user.setActivity(str);
@@ -23,6 +24,9 @@ module.exports = {
 		
 		console.log(`Trivia question every ${triviaInterval} hours.`);
 		cron.schedule(`${Math.random()*59} */${triviaInterval} * * *`, _=>{ client.commands.get('trivia').execute(client) });
+
+		console.log(`Meme posted every hour.`);
+		cron.schedule(`${Math.random()*59} * * * *`, _=>{ client.commands.get('meme').execute(client) });
 
 	},
 };

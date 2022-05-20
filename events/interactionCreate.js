@@ -28,7 +28,7 @@ module.exports = {
 		// singles
 		try {
 			dubsWinnings = dubsCheck(interaction.id);
-			reactIfDubs(dubsWinnings, interaction);
+			// reactIfDubs(dubsWinnings, interaction);
 
 			if(dubsWinnings > 0)
 				payout(interaction.user, dubsWinnings);
