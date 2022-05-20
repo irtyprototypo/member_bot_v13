@@ -1,11 +1,10 @@
-const {tyBot, bot3} = require('../config/users.json');
-const cron = require('node-cron');
 const { channel_bot_spam, channel_bot_spam_alt } = require('../config/channels.json');
-const { payout } = require('../util.js');
 const { GURUBASHI_WINNINGS, BASE_POINTS } = require('../config/gamba.json');
 const { MODE, guildId, guildId_alt } = require('../config/bot.json');
+const CHANNEL_YELL = (MODE == 'DEV') ? channel_bot_spam_alt : channel_bot_spam;
 const GUILD = (MODE == 'DEV') ? guildId_alt : guildId;
-const CHANNEL_YELL = (MODE == 'DEV') ? channel_bot_spam : channel_bot_spam_alt;
+const { payout } = require('../util.js');
+const cron = require('node-cron');
 
 module.exports = {
 	name: 'ready',
@@ -13,6 +12,7 @@ module.exports = {
 	async execute(client) {
 		let str = (MODE == 'DEV') ? '🌲🌲' : '🍺🍺';
 		let guruInterval = 1;
+		let triviaInterval = 8;
 
 		console.log(`Ready! Logged in as ${client.user.tag}`);
         client.user.setActivity(str);
@@ -20,12 +20,14 @@ module.exports = {
 		// console.log(`Gurubashi is up. ${GURUBASHI_WINNINGS}/${guruInterval}h`);
 		// cron.schedule(`0 */${guruInterval} * * *`, _=>{ gurubashiPoints(client); });
 		// cron.schedule('*/3 * * * * *', _=>{ gurubashiPoints(client); });
-
+		
+		console.log(`Trivia question every ${triviaInterval} hours.`);
+		cron.schedule(`${Math.random()*59} */${triviaInterval} * * *`, _=>{ client.commands.get('trivia').execute() });
 
 	},
 };
 
-// broken
+// broken because of cron cache?
 function gurubashiPoints(client){
 	// console.log('a');
 	client.guilds.cache.forEach(g => {
@@ -41,3 +43,4 @@ function gurubashiPoints(client){
 			});
 	});
 }
+
