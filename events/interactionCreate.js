@@ -1,10 +1,8 @@
 const fs = require('fs');
-const { payout, dubsCheck } = require('../util.js');
+const { payout, dubsCheck, reactIfDubs } = require('../util.js');
 const { MessageAttachment } = require('discord.js');
 const stoneColdGIFs = fs.readdirSync('./img/stonecold');
 const { STUN_CHANCE } = require('../config/gamba.json');
-
-
 
 module.exports = {
 	name: 'interactionCreate',
