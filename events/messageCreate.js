@@ -63,7 +63,6 @@ module.exports = {
 			await message.channel.send(`<@${message.author.id}> 👉 ${message.id}`)
 			.then( response =>{
 				dubsWinnings = dubsCheck(message.id);
-				console.log(dubsWinnings);
 				reactIfDubs(dubsWinnings, response);
 				if (dubsWinnings > 0)
 					payout(message.author, dubsWinnings)

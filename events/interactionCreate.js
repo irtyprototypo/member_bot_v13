@@ -29,7 +29,9 @@ module.exports = {
 
 		// singles
 		try {
-			digits = dubsCheck(interaction.id);
+			dubsWinnings = dubsCheck(interaction.id);
+			reactIfDubs(dubsWinnings, response);
+
 			if(digits > 0)
 				payout(interaction.user, digits);
 			command.execute(interaction);
