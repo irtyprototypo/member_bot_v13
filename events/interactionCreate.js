@@ -28,10 +28,10 @@ module.exports = {
 		// singles
 		try {
 			dubsWinnings = dubsCheck(interaction.id);
-			reactIfDubs(dubsWinnings, response);
+			reactIfDubs(dubsWinnings, interaction);
 
-			if(digits > 0)
-				payout(interaction.user, digits);
+			if(dubsWinnings > 0)
+				payout(interaction.user, dubsWinnings);
 			command.execute(interaction);
 		}catch (error) { console.error(error); }
 
