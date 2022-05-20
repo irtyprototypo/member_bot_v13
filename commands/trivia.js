@@ -13,9 +13,7 @@ const PAGE_CHOICES = ['0️⃣', '1️⃣', '2️⃣', GO_EMOJI];
 const MULTI_CHOICES = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫'];
 const BOOL_CHOICES = ['🇹', '🇫'];
 let catg_choices = []; 
-let mutli_choices = [];
 const num2emoji = require('number-to-emoji');
-const { options } = require('nodemon/lib/config');
 let answer_choices = BOOL_CHOICES;
 const TRIVIA_DURATION = 10;	// minutes
 
@@ -71,9 +69,11 @@ module.exports = {
 				}
 			]
 		};
-		
-		// let post = interaction.client.channels.cache.get(CHANNEL_YELL).send({ embeds: [embededResponse], fetchReply: true });
-		let post = interaction.reply({ embeds: [embededResponse], fetchReply: true });
+
+		let post;
+		try{ post = interaction.reply({ embeds: [embededResponse], fetchReply: true }) }
+		catch(e){ post = interaction.channels.cache.get(CHANNEL_YELL).send({ embeds: [embededResponse], fetchReply: true }); }
+	
 		Promise.resolve(post)
 			.then(p =>{
 				DIFF_CHOICES.forEach( c =>{ p.react(c) })
@@ -262,10 +262,6 @@ module.exports = {
 				});
 		
 			})
-		
-
-
-
 	},
 };
 

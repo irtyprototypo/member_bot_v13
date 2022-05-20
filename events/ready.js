@@ -22,7 +22,7 @@ module.exports = {
 		// cron.schedule('*/3 * * * * *', _=>{ gurubashiPoints(client); });
 		
 		console.log(`Trivia question every ${triviaInterval} hours.`);
-		cron.schedule(`${Math.random()*59} */${triviaInterval} * * *`, _=>{ client.commands.get('trivia').execute() });
+		cron.schedule(`${Math.random()*59} */${triviaInterval} * * *`, _=>{ client.commands.get('trivia').execute(client) });
 
 	},
 };
