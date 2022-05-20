@@ -13,7 +13,6 @@ module.exports = {
 		let str = (MODE == 'DEV') ? '🌲🌲' : '🍺🍺';
 		let guruInterval = 1;
 		let triviaInterval = 8;
-		let memeInterval = 1;
 
 		console.log(`Ready! Logged in as ${client.user.tag}`);
         client.user.setActivity(str);

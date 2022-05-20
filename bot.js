@@ -13,7 +13,8 @@ const client = new Client({
 		Intents.FLAGS.GUILD_PRESENCES,
 		Intents.FLAGS.GUILD_VOICE_STATES,
 		Intents.FLAGS.GUILD_MESSAGE_REACTIONS
-	]
+	],
+	resetTimeOffset: 0
 });
 
 client.commands = new Collection();

@@ -16,25 +16,24 @@ module.exports = {
 		let viewing = interaction.options.getBoolean('showme');
 		str = 'Choose a meme category'
 		if (viewing){
-				imgDirectories.forEach( (dir, i) =>{
-					const memes = fs.readdirSync(`./img/${dir}`);
-					str += `\n ${num2emoji.toEmoji(i)}\t${dir.split('-')[0]} (${memes.length})`;
-				});
-				
-				let choices = []
-				let message = interaction.reply({ content: str, fetchReply: true });
-					Promise.resolve(message).then(m =>{
-						for(i=0;i<imgDirectories.length;i++){
-							choices.push(num2emoji.toEmoji(i))
-							try{
-								m.react(num2emoji.toEmoji(i))
-							}catch(e){ console.log(e) }
-						}
+			imgDirectories.forEach( (dir, i) =>{
+				const memes = fs.readdirSync(`./img/${dir}`);
+				str += `\n ${num2emoji.toEmoji(i)}\t${dir.split('-')[0]} (${memes.length})`;
+			});
+			
+			let choices = []
+			let message = interaction.reply({ content: str, fetchReply: true });
+				Promise.resolve(message).then(m =>{
+					for(i=0;i<imgDirectories.length;i++){
+						choices.push(num2emoji.toEmoji(i))
+						m.react(num2emoji.toEmoji(i))
+					}
 
 					const collection = m.createReactionCollector({
 						filter: reaction => { return choices.includes(reaction.emoji.name) },
 						time: 5*60*1000
 					});
+
 					collection.on('collect', (reaction, user) => {
 						if(!user.bot && user.username == interaction.user.username)
 							if (choices.includes(reaction.emoji.name)) {
@@ -42,14 +41,14 @@ module.exports = {
 								let ranMemeIndex = Math.floor((Math.random() * memes.length));
 								let file = new MessageAttachment(`./img/${imgDirectories[num2emoji.fromEmoji(reaction.emoji.name)]}/${memes[ranMemeIndex]}`);
 
-								interaction.channel.send({
+								m.edit({
 									content: `${imgDirectories[num2emoji.fromEmoji(reaction.emoji.name)]}: ${ranMemeIndex} / ${memes.length}`,
 									files: [file]
 								});
-								m.delete()
+								m.reactions.removeAll()
 							}
-					});
-				});	
+				});
+			});	
 		} else{
 			let ranDirIndex = Math.floor((Math.random() * imgDirectories.length));
 			const memes = fs.readdirSync(`./img/${imgDirectories[ranDirIndex]}`);
