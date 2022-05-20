@@ -17,14 +17,14 @@ module.exports = {
 
 		// stunner
 		let stunned = Math.random() * parseInt(STUN_CHANCE)
-		// if(interaction.member.voice.channel && stunned > parseInt(STUN_CHANCE)-1){
+		if(interaction.member.voice.channel && stunned > parseInt(STUN_CHANCE)-1){
 			interaction.member.voice.disconnect();
 				interaction.reply({ 
 					// content: `1/${STUN_CHANCE} chance to get stunned. 🍻 https://youtu.be/MOzjBO2dsmY 🍻`,
 					files: [ new MessageAttachment(`./img/stonecold/${stoneColdGIFs[Math.floor((Math.random() * stoneColdGIFs.length) + 1)]}`)]
 				});
 				return;
-		// }
+		}
 
 
 		// singles
