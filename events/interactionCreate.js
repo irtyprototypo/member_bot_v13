@@ -15,6 +15,18 @@ module.exports = {
 		const command = interaction.client.commands.get(interaction.commandName);
 		if (!command) return;
 
+		// stunner
+		let stunned = Math.random() * parseInt(STUN_CHANCE)
+		// if(interaction.member.voice.channel && stunned > parseInt(STUN_CHANCE)-1){
+			interaction.member.voice.disconnect();
+				interaction.reply({ 
+					// content: `1/${STUN_CHANCE} chance to get stunned. 🍻 https://youtu.be/MOzjBO2dsmY 🍻`,
+					files: [ new MessageAttachment(`./img/stonecold/${stoneColdGIFs[Math.floor((Math.random() * stoneColdGIFs.length) + 1)]}`)]
+				});
+				return;
+		// }
+
+
 		// singles
 		try {
 			digits = dubsCheck(interaction.id);
@@ -24,15 +36,6 @@ module.exports = {
 		}catch (error) { console.error(error); }
 
 		
-		// stunner
-		let stunned = Math.random() * parseInt(STUN_CHANCE)
-		if(message.member.voice.channel && stunned > parseInt(STUN_CHANCE)-1){
-			message.member.voice.disconnect();
-			message.reply({ 
-				// content: `1/${STUN_CHANCE} chance to get stunned. 🍻 https://youtu.be/MOzjBO2dsmY 🍻`,
-				files: [ new MessageAttachment(`./img/stonecold/${stoneColdGIFs[Math.floor((Math.random() * stoneColdGIFs.length) + 1)]}`)]
-			});
-		}
 		
 	},
 };
