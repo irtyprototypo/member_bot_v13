@@ -3,11 +3,14 @@ const { channel_bot_testing, channel_bot_testing_alt, channel_bot_spam, channel_
 const { bryan, irtypo } = require('../config/users.json');
 const { PogChamp, pog, gachiGasm, member, implying } = require('../config/emoji.json');
 const WHAT = true;
-const { DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS } = require('../config/gamba.json');
+const { DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS, STUN_CHANCE } = require('../config/gamba.json');
 const { payout, dubsCheck } = require('../util.js');
 const { MODE, guildId, guildId_alt } = require('../config/bot.json');
 const CHANNEL_TEST = (MODE == 'DEV') ? channel_bot_testing_alt : channel_bot_testing;
 const CHANNEL_YELL = (MODE == 'DEV') ? channel_bot_spam : channel_bot_spam_alt;
+const { MessageAttachment } = require('discord.js');
+const fs = require('fs');
+const stoneColdGIFs = fs.readdirSync('./img/stonecold');
 
 
 module.exports = {
@@ -18,6 +21,18 @@ module.exports = {
 		// ignore other bot commands and other bots
 		if(message.author.bot || message.content.substr(0, 1) == '!')
 			return;
+
+
+		// stunner
+		let stunned = Math.random() * 256
+		if(message.member.voice.channel && stunned > 255){
+			message.member.voice.disconnect();
+			message.reply({ 
+				// content: `1/${STUN_CHANCE} chance to get stunned. 🍻 https://youtu.be/MOzjBO2dsmY 🍻`,
+				files: [ new MessageAttachment(`./img/stonecold/${stoneColdGIFs[Math.floor((Math.random() * stoneColdGIFs.length) + 1)]}`)]
+			});
+		}
+		
 
 		// reactions
 		message.channel.fetch()		// async 
