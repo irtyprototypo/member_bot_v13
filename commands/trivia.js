@@ -71,8 +71,12 @@ module.exports = {
 		};
 
 		let post;
-		try{ post = interaction.reply({ embeds: [embededResponse], fetchReply: true }) }
-		catch(e){ post = interaction.channels.cache.get(CHANNEL_YELL).send({ embeds: [embededResponse], fetchReply: true }); }
+		try{
+			post = interaction.reply({ embeds: [embededResponse], fetchReply: true })
+		}catch(e){
+			post = interaction.channels.cache.get(CHANNEL_YELL).send(`@everyone`); 
+			post = interaction.channels.cache.get(CHANNEL_YELL).send({ embeds: [embededResponse], fetchReply: true }); 
+		}
 	
 		Promise.resolve(post)
 			.then(p =>{
@@ -177,16 +181,11 @@ module.exports = {
 										answers = r.results[0].incorrect_answers;
 										answer = r.results[0].correct_answer;
 										answers.push(answer);
-		
-										if(r.results[0].type.includes('boolean'))
-											BOOL_CHOICES.forEach( c =>{ p.react(c) })
-										else{
-											answers.forEach( (c, i) =>{ p.react(MULTI_CHOICES[i]) })
-											answers = shuffle(answers);
-										}
+										answers = shuffle(answers);
 										answerId = answers.indexOf(answer);
-										
 										answer_choices = (r.results[0].type.includes('boolean')) ? BOOL_CHOICES : MULTI_CHOICES;
+										answers.forEach( (c, i) =>{ p.react(answer_choices[i]) })
+										
 										p.react(GO_EMOJI)
 										answers.forEach((a, i) =>{ answers[i] = answer_choices[i] + ' ' + a })
 										embededResponse.fields.push({ name: `Choices`, value: `${format(answers.toString()).replaceAll(',', '\n')}`, inline: true })
