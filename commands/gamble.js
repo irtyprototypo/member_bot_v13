@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { WIN_THREASHOLD } = require('../config/gamba.json');
 const { checkPoints, payout } = require('../util.js');
-const FIRE_THREASHOLD =3;
+const FIRE_THREASHOLD = 3;
 let critMultiplier = 10;
 let consecutiveCount = 0;
 const { takemymoney } = require('../config/emoji.json');
@@ -25,30 +25,31 @@ module.exports = {
 		}
 
 		if(roll == 100){
-			paid = payout(interaction.user, bet*critMultiplier);
+			paid = bet*critMultiplier;
 			str = `won ${bet*critMultiplier} points.`;
 			consecutiveCount++;
 			win = true;
 		} else if (roll >= WIN_THREASHOLD){
-			paid = payout(interaction.user, bet);
+			paid = bet;
 			str = `won ${bet} points.`;
 			consecutiveCount++;
 			win = true;
 		} else if (roll == 0){
-			paid = payout(interaction.user, -6000000000000);
+			paid = -6000000000000;
 			str = `lost it all!`;
 			consecutiveCount = 0;
 		}else{
-			paid = payout(interaction.user, -bet);
+			paid = -bet;
 			str = `lost ${bet} points.`;
 			consecutiveCount = 0;
 		}
 
 		if(consecutiveCount >= FIRE_THREASHOLD)
-			payout(interaction.user, bet*FIRE_THREASHOLD);
+			paid = bet*FIRE_THREASHOLD;
 
+		payout(interaction.user, paid);
 		emoj = (roll >= WIN_THREASHOLD) ? '📈' : '📉';
-		respStr = `You bet ${bet} and rolled a ${roll} ${emoj}.\n You ${paid.str}`;
+		respStr = `You bet ${bet} and rolled a ${roll} ${emoj}.\n You ${str}`;
 		console.log(`${interaction.user.username} rolled a ${roll} and ${str}`);
 
 
