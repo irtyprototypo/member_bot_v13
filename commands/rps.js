@@ -46,7 +46,7 @@ module.exports = {
 			}
 
 
-			message.reply(`You throw ${reaction.emoji.name}. I throw ${OPTIONS[cpuChoice]}. \n You ${outcome}`);
+			message.edit(`You threw ${reaction.emoji.name}. I threw ${OPTIONS[cpuChoice]}. You ${outcome}`);
 			message.reactions.removeAll();
 
 			if(outcome.includes('win'))
