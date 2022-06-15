@@ -17,7 +17,7 @@ module.exports = {
 		let win = false;
 		let bet = interaction.options.getNumber('bet');
 		bet = (bet) ? bet : 20;
-		let roll = Math.floor(Math.random() * 100);
+		let roll = Math.floor(Math.random() * 101);
 		
 		if(bet > checkPoints(interaction.user).user.points){
 			interaction.reply(`Transaction failed. Insufficient funds.`);
