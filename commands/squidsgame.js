@@ -1,5 +1,4 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const BOOL_CHOICES = ['🇹', '🇫'];
 const MULTI_CHOICES = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫'];
 let interval = 1;
 let startingTimer = 20;
@@ -68,7 +67,7 @@ module.exports = {
 		post = await interaction.channel.send({ embeds: [embededResponse], fetchReply: true }); 
 
 		const collection = post.createReactionCollector({
-			filter: reaction => { return MULTI_CHOICES.includes(reaction.emoji.name) || BOOL_CHOICES.includes(reaction.emoji.name)},
+			filter: reaction => { return MULTI_CHOICES.includes(reaction.emoji.name) },
 			time: 10*60*1000
 		});
 
@@ -77,10 +76,10 @@ module.exports = {
 				console.log(`${user.username} is the winner`);
 				post.reactions.removeAll();
 				embededResponse.fields.push({
-					name: `\n\nThe correct answer was ${answerEmoji}`,
-					value: `${user.username} wins ${SQUID_GAME_WINNINGS}!`,
+					name: `\nThe correct answer was ${answerEmoji}`,
+					value: `${user.username} wins ${SQUID_GAME_WINNINGS} points!`,
 				})
-				
+
 				post.edit({embeds: [embededResponse]});
 				payout(user, SQUID_GAME_WINNINGS);
 			}
@@ -97,7 +96,7 @@ async function displayQuestion(){
 	choices.forEach((e, i) => {
 		embededResponse.fields.push({
 			name: `‎`,
-			value: `${MULTI_CHOICES[i]}\t ${e}`,
+			value: `${MULTI_CHOICES[i]}\t\t ${e}`,
 		})
 	});
 
