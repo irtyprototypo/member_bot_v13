@@ -40,7 +40,7 @@ module.exports = {
 			}
 			f[i] = {
 				name: `${str}`,
-				value: g.points
+				value: parseInt(g.points).toLocaleString("en-US")
 			};
 			
 			interaction.guild.members.cache.forEach( m =>{
