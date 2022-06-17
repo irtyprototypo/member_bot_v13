@@ -23,7 +23,10 @@ module.exports = {
 		interaction.options.getMentionable('who').setNickname(to);
 		if(anounce)
 			interaction.reply(`${interaction.user.username} renamed ${who} to ${to}`);
-		
+		else 
+			interaction.reply({content: `${interaction.user.username} renamed ${who.user.username} to ${to}`, ephemeral: true});
+
 		console.log(`${interaction.user.username} renamed ${who.user.username} to ${to}`);
+
 	},
 };
