@@ -26,12 +26,12 @@ module.exports = {
 
 		if(roll == 100){
 			paid = bet*critMultiplier;
-			str = `won ${bet*critMultiplier} points.`;
+			str = `won ${(bet*critMultiplier).toLocaleString("en-US")} points.`;
 			consecutiveCount++;
 			win = true;
 		} else if (roll >= WIN_THREASHOLD){
 			paid = bet;
-			str = `won ${bet} points.`;
+			str = `won ${bet.toLocaleString("en-US")} points.`;
 			consecutiveCount++;
 			win = true;
 		} else if (roll == 0){
@@ -40,7 +40,7 @@ module.exports = {
 			consecutiveCount = 0;
 		}else{
 			paid = -bet;
-			str = `lost ${bet} points.`;
+			str = `lost ${bet.toLocaleString("en-US")} points.`;
 			consecutiveCount = 0;
 		}
 
@@ -49,7 +49,7 @@ module.exports = {
 
 		payout(interaction.user, paid);
 		emoj = (roll >= WIN_THREASHOLD) ? '📈' : '📉';
-		respStr = `You bet ${bet} and rolled a ${roll} ${emoj}.\n You ${str}`;
+		respStr = `You bet **${bet.toLocaleString("en-US")}** and rolled a ${roll} ${emoj}.\n You ${str}`;
 		console.log(`${interaction.user.username} rolled a ${roll} and ${str}`);
 
 

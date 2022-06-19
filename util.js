@@ -26,7 +26,7 @@ function checkPoints(user) {
         csv = newLedgerEntry(csv, user);
 
     writeCSV(csv);
-    str = `#${csv[userIndex].place} with ${csv[userIndex].points} points.`;
+    str = `#${csv[userIndex].place} with ${csv[userIndex].points.toLocaleString("en-US")} points.`;
     console.log(`${user.username} is ${str}`);
     return { 'csv': csv, 'str': str, 'user': csv[userIndex] };
 }
@@ -69,7 +69,7 @@ function payout(user, amount) {
     if (newGambler)
         csv = newLedgerEntry(csv, user);
 
-    str = `${((amount > 0) ? 'won' : 'lost')} ${Math.abs(amount)} points and are now at ${csv[userIndex].points} points.`;
+    str = `${((amount > 0) ? 'won' : 'lost')} ${Math.abs(amount).toLocaleString("en-US")} points and are now at ${csv[userIndex].points.toLocaleString("en-US")} points.`;
     console.log(`${user.username} has ${str}`);
 
     writeCSV(csv);
