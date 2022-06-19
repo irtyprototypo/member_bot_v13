@@ -113,7 +113,7 @@ function gift(gifter, recipient, amount) {
     csv[gifterIndex].points = parseInt(csv[gifterIndex].points) - parseInt(amount);
     csv[reciIndex].points = parseInt(csv[reciIndex].points) + parseInt(amount);
 
-    str = `${csv[gifterIndex].username} gifted ${amount} points to ${csv[reciIndex].username}.`;
+    str = `${csv[gifterIndex].username} gifted ${amount.toLocaleString("en-US")} points to ${csv[reciIndex].username}.`;
     writeCSV(csv);
     return { 'csv': csv, 'str': str };
 }
