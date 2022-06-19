@@ -24,6 +24,9 @@ module.exports = {
 			return;
 		}
 
+		if(consecutiveCount >= FIRE_THREASHOLD)
+			bet = bet*FIRE_THREASHOLD;
+			
 		if(roll == 100){
 			paid = bet*critMultiplier;
 			str = `won ${(bet*critMultiplier).toLocaleString("en-US")} points.`;
@@ -44,8 +47,6 @@ module.exports = {
 			consecutiveCount = 0;
 		}
 
-		if(consecutiveCount >= FIRE_THREASHOLD)
-			paid = bet*FIRE_THREASHOLD;
 
 		payout(interaction.user, paid);
 		emoj = (roll >= WIN_THREASHOLD) ? '📈' : '📉';

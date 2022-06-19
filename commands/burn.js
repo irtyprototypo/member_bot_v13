@@ -26,6 +26,6 @@ module.exports = {
 
 		payout(interaction.user, -amount);
 		payout(who, -amount/2);
-		interaction.reply(`${interaction.user.username} burned ${amount/2} of <@${who.id}>'s points.`);
+		interaction.reply(`${interaction.user.username} burned ${(amount/2).toLocaleString("en-US")} of <@${who.id}>'s points.`);
 	},
 };
