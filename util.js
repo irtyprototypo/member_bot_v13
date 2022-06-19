@@ -1,4 +1,4 @@
-const { BASE_POINTS, DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS } = require('./config/gamba.json');
+const { BASE_POINTS, DUBS_WINNINGS, TRIPS_WINNINGS, QUADS_WINNINGS, QUINTS_WINNINGS, TRIVIA_DURATION } = require('./config/gamba.json');
 const ledger_path = './data/ledger.csv';
 const fs = require('fs');
 const { PogChamp, pog, gachiGasm, member, implying } = require('./config/emoji.json');
@@ -6,6 +6,8 @@ let newGambler = true;
 const { load } = require('csv-load-sync');
 const CSV_HEADERS = ['id', 'username', 'place', 'points'];
 const { MODE, guildId, guildId_alt } = require('./config/bot.json');
+let TIMER_INTERVAL = 1;
+let TRIVIA_UPDATE_TIMER = TRIVIA_DURATION;
 
 
 function checkPoints(user) {
@@ -13,26 +15,26 @@ function checkPoints(user) {
     let userIndex = 0;
     newGambler = true;
     // console.log(csv);
-    csv.forEach( (gambler, index) =>{
-        if(gambler.id == user.id){
+    csv.forEach((gambler, index) => {
+        if (gambler.id == user.id) {
             userIndex = index;
             newGambler = false;
         }
     });
 
-    if(newGambler)
+    if (newGambler)
         csv = newLedgerEntry(csv, user);
-    
+
     writeCSV(csv);
     str = `#${csv[userIndex].place} with ${csv[userIndex].points} points.`;
     console.log(`${user.username} is ${str}`);
-    return { 'csv': csv, 'str': str , 'user': csv[userIndex]};
+    return { 'csv': csv, 'str': str, 'user': csv[userIndex] };
 }
 
 
-function loadAndValidateCSV(csv_path){
+function loadAndValidateCSV(csv_path) {
     let fileHeader = fs.readFileSync(csv_path, 'UTF-8').split(/\r?\n/)[0];
-    if(fileHeader != CSV_HEADERS.toString()){
+    if (fileHeader != CSV_HEADERS.toString()) {
         console.log('Writing Headers...');
         fs.writeFileSync(csv_path, CSV_HEADERS.toString())
     }
@@ -41,8 +43,8 @@ function loadAndValidateCSV(csv_path){
     return csv;
 }
 
-function newLedgerEntry(csv, user){
-    csv.push({ id: user.id,  username: user.username, place: csv.length+1, points: BASE_POINTS})
+function newLedgerEntry(csv, user) {
+    csv.push({ id: user.id, username: user.username, place: csv.length + 1, points: BASE_POINTS })
     newGambler = false;
     console.log(`${user.username} was added to the ledger with ${BASE_POINTS} points.`);
 
@@ -54,156 +56,156 @@ function payout(user, amount) {
     let userIndex = 0;
     let prev = 0;
 
-    csv.forEach( (gambler, index) =>{
+    csv.forEach((gambler, index) => {
 
-        if(gambler.id == user.id){
+        if (gambler.id == user.id) {
             userIndex = index;
-                prev = gambler.points;
-                gambler.points = ((parseInt(gambler.points) + amount) < 0) ? 0 : parseInt(gambler.points) + amount;
-                newGambler = false;
+            prev = gambler.points;
+            gambler.points = ((parseInt(gambler.points) + amount) < 0) ? 0 : parseInt(gambler.points) + amount;
+            newGambler = false;
         }
     });
 
-    if(newGambler)
+    if (newGambler)
         csv = newLedgerEntry(csv, user);
-    
-    str = `${((amount > 0)  ? 'won' : 'lost' )} ${Math.abs(amount)} points and are now at ${csv[userIndex].points} points.`;
+
+    str = `${((amount > 0) ? 'won' : 'lost')} ${Math.abs(amount)} points and are now at ${csv[userIndex].points} points.`;
     console.log(`${user.username} has ${str}`);
 
     writeCSV(csv);
-    return {'csv': csv, 'str': str, 'user': csv[userIndex]};
+    return { 'csv': csv, 'str': str, 'user': csv[userIndex] };
 }
 
-function gift(gifter, recipient, amount){
+function gift(gifter, recipient, amount) {
     let csv = loadAndValidateCSV(ledger_path);
     // console.log(csv);
 
     let gifterPoints, gifterIndex, reciPoints, reciIndex;
     amount = Math.abs(amount);
 
-    csv.forEach( (gambler, index) =>{
-        if(gambler.id == gifter.id){
+    csv.forEach((gambler, index) => {
+        if (gambler.id == gifter.id) {
             gifterIndex = index;
             gifterPoints = gambler.points;
         }
 
-        if(gambler.id == recipient.id){
+        if (gambler.id == recipient.id) {
             reciPoints = gambler.points;
             reciIndex = index;
         }
     });
 
-        
-    if(!csv[gifterIndex]){
+
+    if (!csv[gifterIndex]) {
         csv = newLedgerEntry(csv, gifter)
-        gifterIndex = csv.length-1;
+        gifterIndex = csv.length - 1;
     }
 
-    if(!csv[reciIndex]){
+    if (!csv[reciIndex]) {
         csv = newLedgerEntry(csv, recipient)
-        reciIndex = csv.length-1;
+        reciIndex = csv.length - 1;
     }
 
-    if(amount >  csv[gifterIndex].points)
-        return {'csv': csv, 'str': `Gift failed. Insufficient funds.`};
+    if (amount > csv[gifterIndex].points)
+        return { 'csv': csv, 'str': `Gift failed. Insufficient funds.` };
 
 
-    csv[gifterIndex].points = parseInt(csv[gifterIndex].points) -  parseInt(amount);
-    csv[reciIndex].points = parseInt(csv[reciIndex].points) +  parseInt(amount);
+    csv[gifterIndex].points = parseInt(csv[gifterIndex].points) - parseInt(amount);
+    csv[reciIndex].points = parseInt(csv[reciIndex].points) + parseInt(amount);
 
     str = `${csv[gifterIndex].username} gifted ${amount} points to ${csv[reciIndex].username}.`;
     writeCSV(csv);
-    return {'csv': csv, 'str': str};
+    return { 'csv': csv, 'str': str };
 }
 
-function makeUniqueAndSort(csv){
-    csv = csv.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i)
-    csv.sort((a,b) => b.points - a.points);
+function makeUniqueAndSort(csv) {
+    csv = csv.filter((v, i, a) => a.findIndex(v2 => (v2.id === v.id)) === i)
+    csv.sort((a, b) => b.points - a.points);
     return csv;
 }
 
 
-function writeCSV(csv){
+function writeCSV(csv) {
     csv = makeUniqueAndSort(csv);
 
     var fil = fs.readFileSync(ledger_path).toString().split("\n");
-    if(fil[0] != CSV_HEADERS.toString())
+    if (fil[0] != CSV_HEADERS.toString())
         fs.writeFileSync(ledger_path, CSV_HEADERS.toString());
 
 
     let csvString = [
         CSV_HEADERS, ...csv.map((item, index) =>
-        [ item.id,  item.username, ++index,  item.points])
+            [item.id, item.username, ++index, item.points])
     ].map(e => e.join(",")).join("\n");
-        
+
     fs.writeFileSync(ledger_path, csvString, (err) => { if (err) console.log(err); });
 }
 
 
-function dubsCheck(messageId){
+function dubsCheck(messageId) {
 
-	let len = messageId.length;
-	let ones = messageId.substr(len-1, 1);
-	let tens = messageId.substr(len-2, 1);
-	let thous = messageId.substr(len-3, 1);
-	let tenThous = messageId.substr(len-4, 1);
-	let hundThous = messageId.substr(len-5, 1);
-	let mills = messageId.substr(len-6, 1);
-	let n420 = messageId.substr(len-3);
-	let n69 = messageId.substr(len-2, 2);
+    let len = messageId.length;
+    let ones = messageId.substr(len - 1, 1);
+    let tens = messageId.substr(len - 2, 1);
+    let thous = messageId.substr(len - 3, 1);
+    let tenThous = messageId.substr(len - 4, 1);
+    let hundThous = messageId.substr(len - 5, 1);
+    let mills = messageId.substr(len - 6, 1);
+    let n420 = messageId.substr(len - 3);
+    let n69 = messageId.substr(len - 2, 2);
 
-    if(ones == tens && tens == thous && thous == tenThous && tenThous == hundThous && hundThous == mills)
+    if (ones == tens && tens == thous && thous == tenThous && tenThous == hundThous && hundThous == mills)
         return -666666
-    else if(ones == tens && tens == thous && thous == tenThous && tenThous == hundThous)
+    else if (ones == tens && tens == thous && thous == tenThous && tenThous == hundThous)
         return QUINTS_WINNINGS
-    else if(ones == tens && tens == thous && thous == tenThous)
+    else if (ones == tens && tens == thous && thous == tenThous)
         return QUADS_WINNINGS
-    else if(n420 == `420`)
+    else if (n420 == `420`)
         return 420
-    else if(n69 == `69`)
+    else if (n69 == `69`)
         return 69
-    else if(ones == tens && tens == thous)
+    else if (ones == tens && tens == thous)
         return TRIPS_WINNINGS
-    else if(ones == tens)
+    else if (ones == tens)
         return DUBS_WINNINGS
-    else 
-		return 0
+    else
+        return 0
 
-	// console.log(`${message.author.username} rolled a ...${mills}${hundThous}${tenThous}${thous}${tens}${ones}`);
+    // console.log(`${message.author.username} rolled a ...${mills}${hundThous}${tenThous}${thous}${tens}${ones}`);
 }
 
-function reactIfDubs(winnings, response){
+function reactIfDubs(winnings, response) {
     let dubsEmoji = PogChamp;
     let tripsEmoji = pog;
     let quadsEmoji = gachiGasm;
 
-    if(MODE == 'DEV'){
+    if (MODE == 'DEV') {
         dubsEmoji = '🙂';
         tripsEmoji = '😃';
         quadsEmoji = '😎';
     }
 
 
-    if(winnings >= DUBS_WINNINGS)
+    if (winnings >= DUBS_WINNINGS)
         response.react(dubsEmoji);
 
-    if(winnings >= TRIPS_WINNINGS)
+    if (winnings >= TRIPS_WINNINGS)
         response.react(tripsEmoji);
 
-    if(winnings >= QUADS_WINNINGS)
+    if (winnings >= QUADS_WINNINGS)
         response.react(quadsEmoji);
 
-    if(winnings >= QUINTS_WINNINGS){
+    if (winnings >= QUINTS_WINNINGS) {
         response.react(`🙏`);
         response.react(`💣`);
     }
-    if(winnings == -666666)
+    if (winnings == -666666)
         response.react('🔫');
 
-    if(winnings == 420)
+    if (winnings == 420)
         response.react('🌲');
 
-    if(winnings == 69){
+    if (winnings == 69) {
         response.react('🇳');
         response.react('🇮');
         response.react('🇨');
@@ -211,10 +213,60 @@ function reactIfDubs(winnings, response){
     }
 }
 
+function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+    return array;
+}
+
+async function updateTimer(post) {
+    embededResponse.description = `Select the correct answer! ${TRIVIA_UPDATE_TIMER} seconds remaining`,
+        post.edit({ embeds: [embededResponse] });
+
+    TRIVIA_UPDATE_TIMER -= TIMER_INTERVAL;
+    if (TRIVIA_UPDATE_TIMER <= 0) {
+        embededResponse.description = `Time expired.`,
+            TRIVIA_UPDATE_TIMER = TRIVIA_DURATION;
+        post.edit({ embeds: [embededResponse] });
+        return;
+    }
+
+    setTimeout(_ => {
+        updateTimer(post)
+    }, TIMER_INTERVAL * 1000)
+}
+
+function escapeHtml(str) {
+    return str
+        .replaceAll(/&quot;/g, `"`)
+        .replaceAll(/&ldquo;/g, `“`)
+        .replaceAll(/&rdquo;/g, `”`)
+        .replaceAll(/&lsquo;/g, `‘`)
+        .replaceAll(/&rsquo;/g, `’`)
+        .replaceAll(/&amp;/g, `&`)
+        .replaceAll(/&lt;/g, `<`)
+        .replaceAll(/&gt;/g, `>`)
+        .replaceAll(/&#039;/g, `'`);
+}
+
 module.exports = {
     gift,
     payout,
     checkPoints,
     dubsCheck,
-    reactIfDubs
+    reactIfDubs,
+    updateTimer,
+    shuffle,
+    escapeHtml
 }

@@ -31,7 +31,8 @@ module.exports = {
 		// cron.schedule('*/3 * * * * *', _=>{ gurubashiPoints(client); });
 
 		console.log(`Trivia question ${minute} minutes past every ${triviaInterval} hours.`);
-		cron.schedule(`${minute} */${triviaInterval} * * *`, _=>{ triviaPost(client) });
+		cron.schedule(`${minute} */${triviaInterval} * * *`, _ => { triviaPost(client) });
+
 
 		console.log(`Meme posted ${minute} minutes past every ${memeInterval} hours.`);
 		cron.schedule(`${minute} */${memeInterval} * * *`, _ => { memPost(client) });
@@ -96,8 +97,12 @@ async function triviaPost(client) {
 
 	await triv.getQuestions(questionOptions)
 		.then(r => {
-
+			if(!r.results[0]){
+				console.log('API error?');
+				return;
+			}
 			console.log(r.results[0]);
+			client.channels.cache.get(CHANNEL_YELL).send('@here')
 			client.channels.cache.get(CHANNEL_YELL).send({ embeds: [embededResponse], fetchReply: true })
 				.then(p => {
 
