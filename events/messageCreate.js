@@ -41,7 +41,7 @@ module.exports = {
 				message.react(member);
 		})
 		.then( _=> {	// think
-			if(message.content.toLowerCase().includes('think'))
+			if(message.content.toLowerCase().includes('think') || message.content.toLowerCase().includes('🤔'))
 				message.react('🤔');
 		})
 		.then( _=> {	// george ⚾

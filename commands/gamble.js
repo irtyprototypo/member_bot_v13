@@ -24,8 +24,7 @@ module.exports = {
 			return;
 		}
 
-		if(consecutiveCount >= FIRE_THREASHOLD)
-			bet = bet*FIRE_THREASHOLD;
+
 			
 		if(roll == 100){
 			paid = bet*critMultiplier;
@@ -46,6 +45,10 @@ module.exports = {
 			str = `lost ${bet.toLocaleString("en-US")} points.`;
 			consecutiveCount = 0;
 		}
+
+
+		if(consecutiveCount >= FIRE_THREASHOLD)
+			paid = paid*FIRE_THREASHOLD;
 
 
 		payout(interaction.user, paid);
