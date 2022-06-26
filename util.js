@@ -257,6 +257,8 @@ function escapeHtml(str) {
         .replaceAll(/&amp;/g, `&`)
         .replaceAll(/&lt;/g, `<`)
         .replaceAll(/&gt;/g, `>`)
+        .replaceAll(/&eacute;/g, `é`)
+        .replaceAll(/&Uuml;/g, `Ü`)
         .replaceAll(/&#039;/g, `'`);
 }
 
